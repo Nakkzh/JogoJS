@@ -2,74 +2,96 @@ var altura = 0;
 var largura = 0;
 var vidas = 1;
 var tempo = 5;
+var ursoIndex = 0;
+var criaUrsoTempo = 1500;
+var pontos = 0;
 
-function TamanhoTela(){
-    altura = window.innerHeight;
-    largura = window.innerWidth;
-    console.log(largura, altura);
-}
-TamanhoTela();
+const imagens = ['/IMG/urso.png', '/IMG/urso2.png', '/IMG/urso3.png'];
 
-function posicaorandom(){
-    if(document.getElementById('mosquito')){
-    document.getElementById('mosquito').remove();
-        if(vidas > 3){
-            window.location.href='gameover.html'
-        }else{
-            document.getElementById('v'+vidas).src="/IMG/coracao_vazio.png";
-            vidas++;
-        }
-    }
-    var posicaoX = Math.floor(Math.random() * largura) -90;
-    var posicaoY = Math.floor(Math.random() * altura) -90;
-    posicaoX = posicaoX < 0 ? 0 : posicaoX;
-    posicaoY = posicaoY < 0 ? 0 : posicaoY;
-
-    console.log(posicaoX, posicaoY);
-    
-    // Elemento HTML
-    var mosquito = document.createElement('img');
-    mosquito.src = '/IMG/mosquito.png'   
-    mosquito.className = tamanhoAleatorio() +' '+ ladoAleatorio();
-    mosquito.style.left = posicaoX + 'px';
-    mosquito.style.top = posicaoY+ 'px';
-    mosquito.style.position = 'absolute';
-    document.body.appendChild(mosquito);
-    mosquito.id = 'mosquito';
-
-    // gracias for le passe heróe de japón
-    mosquito.onclick = function(){
-        this.remove();
-    }
+function TamanhoTela() {
+  altura = window.innerHeight;
+  largura = window.innerWidth;
 }
 
-function tamanhoAleatorio(){
-    var classe = Math.floor(Math.random()*3)
-    switch(classe){
-        case 0:
-            return 'mosquito1'
-        case 1:
-            return 'mosquito2'
-        case 2:
-            return 'mosquito3'
+function iniciarJogo() {
+  TamanhoTela();
+  document.getElementById('cronometro').innerHTML = tempo;
+  document.getElementById('placar').innerHTML = pontos;
+
+  const nivel = localStorage.getItem('nivelJogo');
+  if (nivel === 'normal') {
+    criaUrsoTempo = 1500;
+  } else if (nivel === 'dificil') {
+    criaUrsoTempo = 1000;
+  } else if (nivel === 'chucknorris') {
+    criaUrsoTempo = 750;
+  }
+
+  cicloDosUrsos();
+
+  setInterval(function () {
+    tempo -= 1;
+    if (tempo < 0) {
+      window.location.href = 'win.html';
+    } else {
+      document.getElementById('cronometro').innerHTML = tempo;
     }
+  }, 1000);
 }
 
-function ladoAleatorio(){
-    var classe = Math.floor(Math.random()*3)
-    switch(classe){
-        case 0:
-            return 'ladoA'
-        case 1:
-            return 'ladoB'
+function cicloDosUrsos() {
+  const ursoAnterior = document.getElementById('urso');
+  if (ursoAnterior) {
+    ursoAnterior.remove();
+    if (vidas > 3) {
+      window.location.href = 'gameover.html';
+      return;
+    } else {
+      document.getElementById('v' + vidas).src = '/IMG/coracao_vazio.png';
+      vidas++;
     }
+  }
+
+  const posicaoX = Math.max(Math.floor(Math.random() * largura) - 90, 0);
+  const posicaoY = Math.max(Math.floor(Math.random() * altura) - 90, 0);
+
+  const urso = document.createElement('img');
+  urso.src = imagens[ursoIndex];
+  urso.className = tamanhoAleatorio() + ' ' + ladoAleatorio();
+  urso.style.left = posicaoX + 'px';
+  urso.style.top = posicaoY + 'px';
+  urso.style.position = 'absolute';
+  urso.id = 'urso';
+
+  document.body.appendChild(urso);
+
+  urso.onclick = function () {
+    this.remove();
+
+    // Adiciona pontos conforme o urso clicado
+    if (this.src.includes('urso.png')) {
+      pontos += 10;
+    } else if (this.src.includes('urso2.png')) {
+      pontos += 50;
+    } else if (this.src.includes('urso3.png')) {
+      pontos += 100;
+    }
+
+    document.getElementById('placar').innerHTML = pontos;
+  };
+
+  ursoIndex = (ursoIndex + 1) % imagens.length;
+
+  setTimeout(cicloDosUrsos, criaUrsoTempo);
 }
 
-var cronometro = setInterval(function(){
-    tempo -= 1
-    if(tempo < 0){
-        window.location.href = 'win.html'
-    }else{
-        document.getElementById('cronometro').innerHTML = tempo;
-    }
-}, 1000)
+function tamanhoAleatorio() {
+  const classe = Math.floor(Math.random() * 3);
+  return ['urso1', 'urso2', 'urso3'][classe];
+}
+
+function ladoAleatorio() {
+  return Math.random() < 0.5 ? 'ladoA' : 'ladoB';
+}
+
+window.onload = iniciarJogo;
