@@ -34,6 +34,9 @@ body{
     background-image: url(/IMG/bg.jpg);
     background-size: cover;
 }
+.derrota{
+    background-size: cover;
+}
 html{
     cursor: url("/IMG/PG.gif") 50 50, auto;
 }
@@ -94,5 +97,45 @@ html{
     font-size: 20px;
     font-weight: bold;
     margin-left: 20px;
-  }
+}
+
+
+.coracaoBonus {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.icone-loja {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+    z-index: 1000;
+}
   
+.vendedorp {
+    position: fixed;
+    bottom: 5px;
+    left: 20px;
+    width: 500px;
+    height: auto;
+    z-index: 1000;
+} 
+
+.moedaBonus {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.moedas{
+    float: left;
+    font-size: 20px;
+    font-weight: bold;
+    margin-left: 20px;
+}

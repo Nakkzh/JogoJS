@@ -1,7 +1,7 @@
 var altura = 0;
 var largura = 0;
 var vidas = 1;
-var tempo = 5;
+var tempo = 15;
 var ursoIndex = 0;
 var criaUrsoTempo = 1500;
 var pontos = 0;
@@ -93,5 +93,93 @@ function tamanhoAleatorio() {
 function ladoAleatorio() {
   return Math.random() < 0.5 ? 'ladoA' : 'ladoB';
 }
+
+
+
+// Código para vida extra (coração)
+
+const coracaoImagem = '/IMG/coracao_cheio.png';
+
+function cicloDosCoracoes() {
+const posicaoX = Math.max(Math.floor(Math.random() * largura) - 50, 0);
+const posicaoY = Math.max(Math.floor(Math.random() * altura) - 50, 0);
+
+const coracao = document.createElement('img');
+coracao.src = coracaoImagem;
+coracao.className = 'coracaoBonus';
+coracao.style.left = posicaoX + 'px';
+coracao.style.top = posicaoY + 'px';
+coracao.style.position = 'absolute';
+coracao.id = 'coracao_' + new Date().getTime();
+
+document.body.appendChild(coracao);
+
+coracao.onclick = function () {
+  this.remove();
+  if (vidas > 1) {
+    vidas--;
+    document.getElementById('v' + vidas).src = '/IMG/coracao_cheio.png';
+  }
+};
+
+setTimeout(() => {
+  if (document.body.contains(coracao)) {
+    coracao.remove();
+  }
+}, 3000);
+}
+
+function agendarCoracao() {
+const intervaloAleatorio = Math.floor(Math.random() * 4000) + 3000;
+
+  setTimeout(() => {
+    cicloDosCoracoes();
+    agendarCoracao();
+  }, intervaloAleatorio);
+}
+
+
+const moedaImagem = '/IMG/moeda.png';
+let moedas = 0;
+
+function cicloDasMoedas() {
+const posicaoX = Math.max(Math.floor(Math.random() * largura) - 30, 0);
+const posicaoY = Math.max(Math.floor(Math.random() * altura) - 30, 0);
+
+const moeda = document.createElement('img');
+moeda.src = moedaImagem;
+moeda.className = 'moedaBonus';
+moeda.style.left = posicaoX + 'px';
+moeda.style.top = posicaoY + 'px';
+moeda.style.position = 'absolute';
+moeda.id = 'moeda_' + new Date().getTime();
+
+document.body.appendChild(moeda);
+
+moeda.onclick = function () {
+  this.remove();
+  moedas++;
+  document.getElementById('moedas').innerHTML = moedas;
+  localStorage.setItem('moedasJogo', moedas); // salva para loja
+};
+
+setTimeout(() => {
+  if (document.body.contains(moeda)) {
+    moeda.remove();
+  }
+}, 4000);
+}
+
+function agendarMoeda() {
+  const intervaloAleatorio = Math.floor(Math.random() * 4000) + 3000;
+  setTimeout(() => {
+    cicloDasMoedas();
+    agendarMoeda();
+  }, intervaloAleatorio);
+}
+
+agendarMoeda();
+
+agendarCoracao();
 
 window.onload = iniciarJogo;
